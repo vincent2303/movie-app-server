@@ -24,13 +24,23 @@ router.get("/user", (req, res)=>{
 
 // ----------- register and login -----------
 
-//cregister
+//register
 router.post("/register", createAccount);
 
 //login
-router.post('/login',
+router.post('/getUserWithPassword',
     passport.authenticate('local', { session: false }),
-    generateToken
+    generateToken,
+    (req, res)=>{
+        res.json({user: req.user, token: req.token})
+    }
+);
+// autoLogin
+router.get('/getUserByToken',
+    checkToken,
+    (req, res, next)=>{
+        res.json(req.user)
+    }
 );
 
 // ----------- Protected Routes with token authentification -----------

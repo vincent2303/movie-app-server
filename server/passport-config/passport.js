@@ -21,6 +21,8 @@ function(username, password, done) {
         msg: 'Password is wrong'
       });
     }
+    user.salt = undefined
+    user.hash = undefined
     // If credentials are correct, return the user object
     return done(null, user);
   });
