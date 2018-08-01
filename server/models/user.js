@@ -11,6 +11,14 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    urlImage:{
+        type: String,
+        required: true
+    },
+    ratings:{
+        type: Array,
+        required: true
+    },
     salt: String,
     hash: String
 });
@@ -18,6 +26,8 @@ const UserSchema = mongoose.Schema({
 UserSchema.methods.setUser = function(name, email, password){
     this.name = name;
     this.email = email;
+    this.ratings = [];
+    this.urlImage = "https://sguru.org/wp-content/uploads/2017/06/cool-anonymous-profile-pictures-1699946_orig.jpg";
     this.salt = crypto.randomBytes(16).toString('hex');
     this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512').toString('hex');
 };

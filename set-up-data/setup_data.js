@@ -33,25 +33,25 @@ let createMovieMap_Average = function(csvString, d_average){ //with instanciated
     }
 }
 
-let createMovieMap_corr = function(csvString, d_corr){ // movieId --> [[movieId, corrValue, sharedUsers]]
+let createMovieMap_corr = function(csvString, d_corr){ // movieId --> [{movieRecId, corrValue, sharedUsers}]
     let corrTable = Papa.parse(csvString).data // 1st column id movie1, 2nd id movie2, 3rd correlation value, 4th number shared User
     let numberCorr = corrTable.length - 1
     for (let index = 0; index < numberCorr; index++) {
         let movieId1 = Number(corrTable[index][0])
         let movieId2 =  Number(corrTable[index][1])
         let corrValue =  Number(corrTable[index][2])
-        let sharedUser =  Number(corrTable[index][3])
+        let sharedUsers =  Number(corrTable[index][3])
         if(!d_corr.has(movieId1)){
-            d_corr.set(movieId1, [[movieId2, corrValue, sharedUser]]) 
+            d_corr.set(movieId1, [{recId: movieId2, corrValue: corrValue, sharedUsers: sharedUsers}]) 
         }
         else{
-            d_corr.get(movieId1).push([movieId2, corrValue, sharedUser])
+            d_corr.get(movieId1).push({recId: movieId2, corrValue: corrValue, sharedUsers: sharedUsers})
         }
         if(!d_corr.has(movieId2)){
-            d_corr.set(movieId2, [[movieId1, corrValue, sharedUser]])
+            d_corr.set(movieId2, [{recId: movieId1, corrValue: corrValue, sharedUsers: sharedUsers}])
         }
         else{
-            d_corr.get(movieId2).push([movieId1, corrValue, sharedUser])
+            d_corr.get(movieId1).push({recId: movieId1, corrValue: corrValue, sharedUsers: sharedUsers})
         }
     }
     console.log("map movie correlation created")

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const MovieSchema = mongoose.Schema({
-    id: {
+    recId: {
         type: Number,
         required: true
     },
@@ -23,6 +23,14 @@ const MovieSchema = mongoose.Schema({
     },
     ratingNumber: {
         type: Number,
+        required: true
+    },
+    corr: {
+        type: [{
+            recId: Number,
+            corrValue: Number,
+            sharedUsers : Number
+        }],
         required: true
     }
 });

@@ -39,7 +39,9 @@ router.post('/getUserWithPassword',
 router.get('/getUserByToken',
     checkToken,
     (req, res, next)=>{
-        res.json(req.user)
+        User.findOne({email: req.user.email}, (err, user)=>{
+            res.json(user)
+        })
     }
 );
 
@@ -50,5 +52,15 @@ router.get('/getUserByToken',
 router.get('/testAuth', checkToken, (req, res)=>{
     res.json({msg: "reussite auth"})
 })
+
+router.put("/userUpdate", checkToken ,(req, res, next) =>{
+    User.findByIdAndUpdate(req.user._id, {$set: req.body}, function (err, result){
+        User.findOne({_id: req.user._id}, (err, user)=>{
+            user.salt = undefined
+            user.hash = undefined
+            res.json(user)
+        })
+    })
+});
 
 module.exports = router;

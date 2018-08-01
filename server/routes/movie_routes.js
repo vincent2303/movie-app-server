@@ -15,11 +15,29 @@ router.post('/movies',(req, res)=>{
     Movie.find(movieQuery, function(err, findedMovies){
         if(err) throw err
         else{
-            console.log(movieQuery)
-            console.log(findedMovies)
             res.json(findedMovies)
         }
     })
 })
+
+router.get('/movieLike/:title',(req, res)=>{
+    let textSearch = req.params.title.substring(1)
+    Movie.find({title: {$regex: textSearch}}, (err, findedMovies)=>{
+        if(err) throw err
+        else{
+            res.json(findedMovies)
+        }
+    }).sort({ratingNumber: -1}).limit(4)
+})
+
+router.post('/getMoviesWithRecId',(req, res)=>{
+    Movie.find({recId: {$in: req.body.recIdArray}}, function(err, findedMovies){
+        if(err) throw err
+        else{
+            res.json(findedMovies)
+        }
+    })
+})
+
 
 module.exports = router;
