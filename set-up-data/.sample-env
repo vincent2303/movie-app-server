@@ -4,12 +4,16 @@ url_dataBase = "mongodb://localhost:27017/movieData"
 
 movieCollectionName = movies
 
+clusterRepresentationCollectionName = cluster-representations
+
+clusterCollectionName = clusters
+
 movie_data_path = "../data/movies/movies.csv"
 
 average_data_path = "../data/movies/average.csv"
 
 correlation_data_path = "../data/resluts_recommandation_algorithms/correlations.csv"
 
-clustering_data_path = "../data/resluts_recommandation_algorithms/clustering.csv"
+cluster_data_path = "../data/resluts_recommandation_algorithms/clustering.csv"
 
 clusterRepresentation_data_path = "../data/resluts_recommandation_algorithms/clusterRepresentation.csv"

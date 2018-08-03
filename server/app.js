@@ -20,6 +20,7 @@ dotenv.load();
 const movieRoutes = require('./routes/movie_routes');
 const userRoutes = require('./routes/user_routes');
 
+
 app.use(process.env.api, movieRoutes);
 app.use(process.env.api, userRoutes);
 

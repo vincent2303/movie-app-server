@@ -15,7 +15,7 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    ratings:{
+    ratings:{ // array of : [recId, note]
         type: Array,
         required: true
     },

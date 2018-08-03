@@ -3,6 +3,9 @@ const router = express.Router();
 let passport = require('passport');
 
 const User = require('../models/user');
+const ClusterRepresentation = require('../models/clusterRepresentation');
+const Cluster = require('../models/cluster');
+
 
 //controllers
 let createAccount = require('../controllers/register').createAccount;
@@ -62,5 +65,32 @@ router.put("/userUpdate", checkToken ,(req, res, next) =>{
         })
     })
 });
+
+router.get('/getClusterRepresentation',(req, res)=>{
+    ClusterRepresentation.find((err, find)=>{
+        console.log(find)
+        res.json(find)
+    })
+})
+
+router.get('/getClusterData', checkToken, (req, res)=>{
+    User.findOne({_id: req.user._id},{_id: 0, ratings: 1}, (err, ratings)=>{
+        RatedMovies = [] // movies rated from the user
+        ratings.ratings.forEach(rating => {
+            RatedMovies.push(rating[0])
+        });
+        let clusterTable = []
+        // ************* Je comprend pas pourquoi la condition {recId: 31} par exmple ne fonctionne pas...
+        // fait betement...
+        Cluster.find({}, {clusterNotes: 1, recId:1, _id:0}, (err, clusterRow)=>{
+            clusterRow.forEach(row=>{
+                if (RatedMovies.includes(row.recId)) {
+                    clusterTable.push(row)
+                }
+            })
+            res.json(clusterTable)
+        })
+    })
+})
 
 module.exports = router;

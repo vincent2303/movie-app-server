@@ -57,6 +57,8 @@ let createMovieMap_corr = function(csvString, d_corr){ // movieId --> [{movieRec
     console.log("map movie correlation created")
 }
 
+
+
 let addToMongodb = function(d_movie, d_corr, d_average){
     console.log("cheking coherence average/movieInfo")
     movieIdArray = Array.from(d_movie.keys())
@@ -88,9 +90,62 @@ let addToMongodb = function(d_movie, d_corr, d_average){
     }
 }
 
-console.log("starting")
+let addCluster = function(){ // in mongodb: {recId: Number, clusterNotes: Array<Number>}
+    fs.readFile(process.env.cluster_data_path, 'utf8', function(err, csvString){
+        if(err){
+            console.log(err)
+        }
+        else{
+            let clusterTable = Papa.parse(csvString).data // line: recId, note cluster 0, note cluster 1 ...
+            clusterTable.splice(-1,1)
+            numberRow = clusterTable.length
+            numberColumn = clusterTable[0].length
+            MongoClient.connect(process.env.url_dataBase, function(err, db) {
+                if (err) throw err;
+                let dbo = db.db("movieData");
+                for (let index = 0; index < numberRow; index++) {
+                    let row = clusterTable[index]
+                    let clusterRow = {recId: row[0], clusterNotes: row.splice(1, numberColumn)}
+                    dbo.collection(process.env.clusterCollectionName).insertOne(clusterRow, function(err, res) {
+                        if (err) throw err;
+                        db.close();
+                    });
+                }
+            })
+        }
+    })
+}
 
-// creating movieInfo map
+let addClusterRepresentation = function(){
+    fs.readFile(process.env.clusterRepresentation_data_path, 'utf8', function(err, csvString){
+        if(err){
+            console.log(err)
+        }
+        else{
+            let tableRepresentation = Papa.parse(csvString).data // first line: title ( no cluster, cluster 1, cluster 2 ...) first column : genre
+            tableRepresentation.splice(-1,1)
+            numberRow = tableRepresentation.length
+            numberColumn = tableRepresentation[0].length
+            MongoClient.connect(process.env.url_dataBase, function(err, db) {
+                if (err) throw err;
+                let dbo = db.db("movieData");
+                for (let index = 1; index < numberRow; index++) {
+                    let row = tableRepresentation[index]
+                    let genreRepresentation = {genre: row[0], avgAllUser: row[1], avgCluster: row.splice(2, numberColumn)}
+                    dbo.collection(process.env.clusterRepresentationCollectionName).insertOne(genreRepresentation, function(err, res) {
+                        if (err) throw err;
+                        db.close();
+                    });
+                }
+            })
+        }
+    })
+}
+
+console.log("starting")
+addCluster()
+addClusterRepresentation()
+
 let d_movie = new Map()
 fs.readFile(process.env.movie_data_path, 'utf8', function(err, csvString){
     if(err){
