@@ -34,6 +34,11 @@ mongoose.connection.on('connected', ()=>{
     console.log("connection mongodb on :", process.env.url_dataBase)
 });
 
+let socket = require('./socket/socket');
+
+socket.chat(http)
+
 http.listen(port, ()=>{
     console.log('listening on port:'+ port)
 });
+
