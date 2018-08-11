@@ -1,11 +1,13 @@
 
 let idMap = new Map() // _id --> socket Id
 let identityMap = new Map() // _id --> Identity
+let socketMap = new Map() // socketId --> Identity
 
 let addIdentity = function(identity, socket){
     if (!idMap.has(identity._id)) {
         idMap.set(identity._id, socket.id)
         identityMap.set(identity._id, identity)
+        socketMap.set(socket.id, identity)
     }
 }
 
@@ -25,7 +27,6 @@ let sendMessage = function(message, io, socket){
 
 module.exports.chat = function(http){
     let io = require('socket.io')(http);
-
     io.on('connection', function(socket){
         socket.on("login", (identity)=>{
             io.to(socket.id).emit("sendingOnlinePeople", getIdentities())
@@ -34,6 +35,14 @@ module.exports.chat = function(http){
         });
         socket.on('messageFromFront', (message)=>{
             sendMessage(message, io, socket)
+        })
+        socket.on('disconnect', ()=>{
+            let diconnectSocketId = socket.id
+            let disconnectIdentity = socketMap.get(diconnectSocketId)
+            idMap.delete(disconnectIdentity._id)
+            identityMap.delete(disconnectIdentity._id)
+            socketMap.delete(diconnectSocketId)
+            io.emit('disconnectedUser', disconnectIdentity)
         })
     });
 }
